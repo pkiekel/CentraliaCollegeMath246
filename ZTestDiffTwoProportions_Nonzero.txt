@@ -1,0 +1,39 @@
+#### z test for non-zero difference between two proportions
+## Copy and paste this syntax into the R Script window.
+## Then select it all and click the "Submit" button.
+
+########### BEGIN COPYING HERE ###########
+prop.diff.test = function(dataset,pdiff0,GroupingVar,OutcomeVar,alpha) {
+formy <- paste("~",GroupingVar,"+",OutcomeVar)
+.Table <- xtabs(formula = formy, data=dataset)
+.Table
+rowPercents(.Table) # Row Percentages
+phat1=.Table[1,2]/(.Table[1,2]+.Table[1,1])
+phat2=.Table[2,2]/(.Table[2,2]+.Table[2,1])
+n1=(.Table[1,2]+.Table[1,1])
+n2=(.Table[2,2]+.Table[2,1])
+p.diff0=pdiff0
+numerator=(phat1-phat2)-p.diff0
+denom=sqrt(phat1*(1-phat1)/n1+phat2*(1-phat2)/n2)
+zscore=numerator/denom
+pvalue=pnorm(zscore, mean=0, sd=1, lower.tail=FALSE)
+zcrit=qnorm(1-alpha/2,mean=0,sd=1)
+EBP=zcrit*denom
+LCL=(phat1-phat2)-EBP
+UCL=(phat1-phat2)+EBP
+print(paste("phat1=",round(phat1,3),"phat2=",round(phat2,3),"n1=",n1,"n2=",n2),quote=FALSE)
+print(paste("sample pdiff=",round(phat1-phat2,3),"hypothesized pdiff=",p.diff0),quote=FALSE)
+print(paste("z-score=",round(zscore,2),"p-value=",round(pvalue,3),"p-value (2-tail)=",round(2*pvalue,3)),quote=FALSE)
+print(paste(100-alpha*100,"% CI: ",round(LCL,3)," to ",round(UCL,3)),quote=FALSE)
+}
+########### END COPYING HERE ###########
+
+
+
+
+###### Perform z-test.
+# prop.diff.test(dataset,pdiff0,GroupingVar,OutcomeVar,alpha)
+prop.diff.test(Xm13_03,0.03,"Label","Brand",0.05)
+
+
+

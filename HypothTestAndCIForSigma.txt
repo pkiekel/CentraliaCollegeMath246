@@ -1,0 +1,59 @@
+#### Create function to perform chi-square test.
+## Copy and paste this syntax into the R Script window.
+## Then select it all and click the "Submit" button.
+
+########### BEGIN COPYING HERE ###########
+var.interval = function(data,sigma0,conf.level) {
+  df = length(data) - 1
+  chilower = qchisq((1 - conf.level)/2, df)
+  chiupper = qchisq((1 - conf.level)/2, df, lower.tail = FALSE)
+  v = var(data)
+  testchi = df*v/(sigma0^2)
+  alpha = 1-conf.level
+
+  print(paste("Sample Size N = ", df+1),quote=FALSE)
+  print(paste("Sample standard deviation = ", round(sqrt(v),4)),quote=FALSE)
+  print(paste("Hypothesized sigma = ",sigma0),quote=FALSE)
+  print(paste("Sample variance = ", round(v,4)),quote=FALSE)
+  print(paste("Hypothesized variance = ",round(sigma0^2,4)),quote=FALSE)
+  print(" ",quote=FALSE)
+  print(paste("Test statistic = ", round(testchi,4)),quote=FALSE)
+  print(paste("Degrees of freedom = ", round(df,0)),quote=FALSE)
+  print(paste("p-value (1-tail, left, H1: sigma < ",sigma0,") = ", round(pchisq(c(testchi), df, lower.tail=TRUE),4)),quote=FALSE)
+  print(paste("p-value (1-tail, right, H1: sigma > ",sigma0,") = ", round(pchisq(c(testchi), df, lower.tail=FALSE),4)),quote=FALSE)
+  print(paste("p-value (2-tail, H1: sigma != ",sigma0,") = ", round(2*pchisq(c(testchi), df, lower.tail=TRUE),4)),quote=FALSE)
+  print(" ",quote=FALSE)
+  print(paste("Two-tailed test critical values, alpha = ", alpha),quote=FALSE)
+  print(paste("Lower = ", round(qchisq(alpha/2,df),4)),quote=FALSE)
+  print(paste("Upper = ", round(qchisq(1-alpha/2,df),4)),quote=FALSE)
+  print(" ",quote=FALSE)
+  print(paste("Left-tailed test critical value, alpha = ", alpha),quote=FALSE)
+  print(paste("Lower = ", round(qchisq(alpha,df),4)),quote=FALSE)
+  print(" ",quote=FALSE)
+  print(paste("Right-tailed test critical value, alpha = ", alpha),quote=FALSE)
+  print(paste("Upper = ", round(qchisq(1-alpha,df),4)),quote=FALSE)
+  print(" ",quote=FALSE)
+  print(paste(100-alpha*100,"% Confidence Interval for Sigma"),quote=FALSE)
+  print(c(round(sqrt(df * v/chiupper),4), 
+         round(sqrt(df * v/chilower),4)),quote=FALSE)
+  print(paste(100-alpha*100,"% Confidence Interval for Population Variance"),quote=FALSE)
+  print(c(round(df * v/chiupper,4), 
+         round(df * v/chilower,4)),quote=FALSE)
+}
+########### END COPYING HERE ###########
+
+
+
+
+#### Read data.
+## Type the name of the data set to the right of the arrow <-
+m <- XM11_03
+diameter = m[,1]
+
+###### Perform chi-square test.
+## "diameter" is the data set you just input above.
+## The second argument is the null hypothesized standard deviation
+## The last argument is your proportion of confidence, 1-alpha
+  var.interval(diameter,1,0.95)
+
+
