@@ -73,7 +73,7 @@ dat.summary <- function(dat.data){
   my_names <- c("Arithmetic","Five Number Summary","Ranking Spread")
   names(output) <- my_names
   boxplot(dat.data)
-  histogram(dat.data)
+  hist(dat.data)
   
   return(output)
 }
