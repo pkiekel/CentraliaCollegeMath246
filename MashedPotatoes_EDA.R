@@ -18,6 +18,30 @@ MashedPotatoes[, c(2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 MashedPotatoes
 
 
+DavidClusters <- read.csv("/home/pkiekel/Desktop/Teaching/Math245Math246_B891/Math246IntermedStats_B564/Module04_ExploratoryDataAnalysis/Data_MashedPotatoes_DavidClusters.csv")
+# First we need to get rid of the missing values and/or bad values in the data set.
+DavidClusters$DavidClus[DavidClusters$DavidClus != "Yes" & DavidClusters$DavidClus != "No"] <- ""
+DavidClusters$DavidClus <- factor(DavidClusters$DavidClus)
+table(DavidClusters$DavidClus)
+.Table <- table(DavidClusters$ServantLeaderDichot, DavidClusters$DavidClus)
+.Table
+chisq.test(.Table)
+chisq.test(.Table)$expected
+
+DavidClusters$BigDave <- ""
+DavidClusters$BigDave[DavidClusters$BigCluster >= 2] <- "Yes"
+DavidClusters$BigDave[DavidClusters$BigCluster < 2 ] <- "No"
+
+.Table <- table(DavidClusters$ServantLeaderDichot, DavidClusters$BigDave)
+.Table
+chisq.test(.Table)$expected
+chisq.test(.Table)
+chisq.test(.Table)$residuals^2
+
+
+
+
+
 dat.graph <- function(varcat, varquant){
   .Var <- varcat
   .Var2 <- factor(.Var[.Var != ""])
@@ -87,6 +111,8 @@ dat.graph(MashedPotatoes$Strong.independent.leader,
 ######################################
 ## Cluster Analysis ##
 ######################################
+library(ClustOfVar)
+
 cols <- c(21:30,32,34)
 leadervars <- c("StrongIndLeader", "TwoWayComm", "FreedomForDifficultSituations", "RecognizeOthersFeelingDown", "CaresAboutOthersSuccessMoreThanOwn", "CaresAboutOthersWellBeing", "InterestedInOthersReachingGoals", "UnderstandsOrgAndItsGoals", "ProvidesWorkExperience", "SacrificesOwnInt", "WantsToKnowAboutCareerGoals", "DecisionsWithoutConsultingOthers")
 
@@ -101,3 +127,29 @@ print(part)
 summary(part)
 
 
+###############################################################
+##  Cluster Analysis with ALL vars (reverse the bad ones)    ##
+##  to test the hypothesized clustering                      ##
+###############################################################
+cols <- c(22:33,35:36)
+leadervars <- c('TwoWayComm','FreedomForDifficultSituations','RecognizeOthersFeelingDown','CaresAboutOthersSuccessMoreThanOwn','CaresAboutOthersWellBeing','InterestedInOthersReachingGoals','UnderstandsOrgAndItsGoals','ProvidesWorkExperience','SacrificesOwnInt','NotCompromiseEthics','WantsToKnowAboutCareerGoals','HonestyOverProfits','StrongIndLeader_R','DecisionsWithoutConsultingOthers_R')
+
+leader <- hclustvar(MashedPotatoes[,leadervars])
+plot(leader)
+summary(leader)
+
+#choice of the number of clusters
+stability(leader,B=40)
+part <- cutreevar(leader,4)
+print(part)
+summary(part)
+
+
+#### Now make averages to create the clusters we got. ###
+MashedPotatoes$BigCluster <- NA
+for (i in 1:nrow(MashedPotatoes)) {
+  MashedPotatoes$BigCluster[i] <- mean(MashedPotatoes$CaresAboutOthersSuccessMoreThanOwn[i],MashedPotatoes$NotCompromiseEthics[i],MashedPotatoes$ProvidesWorkExperience[i],MashedPotatoes$CaresAboutOthersWellBeing[i],MashedPotatoes$InterestedInOthersReachingGoals[i],MashedPotatoes$HonestyOverProfits[i],MashedPotatoes$TwoWayComm[i],MashedPotatoes$UnderstandsOrgAndItsGoals[i], na.rm = TRUE)
+}
+MashedPotatoes$BigCluster
+
+dat.summary(MashedPotatoes$BigCluster)
